@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Users, UserPlus, UserMinus, ListTodo, FileText, Wallet } from 'lucide-react';
+import { Check, Users, UserPlus, UserMinus, ListTodo, FileText, Wallet, ClipboardCopy } from 'lucide-react';
 import { Player } from '@/types';
 import { parsePlayerList } from '@/utils/parsePlayerList';
 import { useFinance } from '@/context/FinanceContext';
@@ -55,6 +55,40 @@ export default function PlayerSelectionModal({
     return financeState.players.find(p => p.name.toLowerCase() === playerName.toLowerCase())?.type;
   };
 
+  const handleCopyList = () => {
+    let text = '⚽ *LISTA DE PRESENÇA* ⚽\n\n';
+    selectedPlayers.forEach((p, index) => {
+      text += `${index + 1}. ${p.name}\n`;
+    });
+    
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text)
+        .then(() => alert('Lista copiada com sucesso!'))
+        .catch(() => fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+  };
+
+  const fallbackCopy = (text: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "absolute";
+    textArea.style.bottom = "0";
+    textArea.style.right = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      alert('Lista copiada com sucesso!');
+    } catch (err) {
+      console.error('Falha no fallback de cópia', err);
+      alert('Ops! O navegador bloqueou a cópia. Tente copiar manualmente.');
+    }
+    textArea.remove();
+  };
+
   return (
     <div className="space-y-4">
       {/* Tabs */}
@@ -95,6 +129,13 @@ export default function PlayerSelectionModal({
         </div>
         {activeTab === 'mensalista' && (
           <div className="flex gap-2">
+            <button
+              onClick={handleCopyList}
+              className="flex items-center gap-1.5 rounded-lg bg-emerald-500/20 px-3 py-1.5 text-xs font-medium text-emerald-400 transition-colors hover:bg-emerald-500/30 hover:text-emerald-300"
+              title="Copiar lista de confirmados"
+            >
+              <ClipboardCopy size={14} /> Copiar
+            </button>
             <button
               onClick={onSelectAll}
               className="flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
