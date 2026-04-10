@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { User, Plus, Star, Trophy, BookOpen, Play } from 'lucide-react';
 import Link from 'next/link';
 
@@ -18,7 +18,7 @@ const positionColors: Record<string, string> = {
   Pivô: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
 };
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -26,9 +26,9 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } },
 };
 
 export default function HomeHub({ onStartMatch, onOpenSettings, onOpenPlayerSelect }: any) {
